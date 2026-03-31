@@ -154,7 +154,9 @@ public:
         Node* new_node = new Node(value);
         new_node->prev = current->prev;
         new_node->next = current;
-        current->prev->next = new_node;
+        if (current->prev) {
+            current->prev->next = new_node;
+        }
         current->prev = new_node;
         list_size++;
     }
@@ -177,8 +179,12 @@ public:
             current = current->next;
         }
 
-        current->prev->next = current->next;
-        current->next->prev = current->prev;
+        if (current->prev) {
+            current->prev->next = current->next;
+        }
+        if (current->next) {
+            current->next->prev = current->prev;
+        }
         delete current;
         list_size--;
     }
@@ -206,9 +212,19 @@ public:
 
     void link(const MyList &obj)
     {
+        if (obj.empty()) return;
+
         Node* current = obj.head;
         while (current != nullptr) {
-            push_back(current->data);
+            Node* new_node = new Node(current->data);
+            if (tail == nullptr) {
+                head = tail = new_node;
+            } else {
+                tail->next = new_node;
+                new_node->prev = tail;
+                tail = new_node;
+            }
+            list_size++;
             current = current->next;
         }
     }
